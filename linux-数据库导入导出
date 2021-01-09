@@ -1,0 +1,34 @@
+一、数据库导出
+1.ORACLE_SID=alssit
+echo $ORACLE_SID
+2.创建DIRECTORY
+create directory dir_db as  '/home/oracle/impdump'
+3.授权
+grant read,write on directory dir_db to als758i
+--查看目录权限
+ select * from all_directories;
+4.执行导出
+expdp  als758i/als758i@alsdevdb   DIRECTORY=DBBAK DUMPFILE=als758i.dmp schemas=als758i logfile = exp.log
+或者
+expdp  als7sitnc/als7sitnc@30.1.13.138:1521/alssit   DIRECTORY=DBBAK DUMPFILE=ddwang20201222.dmp schemas=als7sitnc logfile = exp.log
+
+二、数据库导入
+--查询DIRECTORY是否创建成功
+select * from all_directories
+--查询会话
+select * from v$session where username is not null order by logon_time,sid
+-- 杀会话
+alter system kill session '296,6385' immediate
+1.数据库用户删除
+drop user transfer758 cascade
+2.用户创建
+CREATE USER transfer758 IDENTIFIED BY transfer758
+3.权限设置
+GRANT DBA TO transfer758
+grant read,write on directory DBBAK  to als758i
+4.设置字符编码集
+export NLS_LANG="AMERICAN_AMERICA.AL32UTF8"
+5.数据库导入
+impdp yzals758/yzals758@alssit directory=DBBAK dumpfile=als7uat831_20200902after.dmp remap_schema=als7uat831:yzals758
+或者
+impdp als7batch/als7batch@30.1.13.129:1521/alsbatch directory=DBBAK dumpfile=als7batch_yilong_i.dmp remap_schema=als7batch:als7batch remap_tablespace=ALS7BATCH_DATA:USERS
