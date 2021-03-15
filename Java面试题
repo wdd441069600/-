@@ -1,0 +1,195 @@
+1. 面向对象的特征
+封装，继承，多态
+1）封装：程序编写者只向用户提供相应的的接口，其他的数据用户访问不到，保证了安全性。程序编写者还可以自己在底下优化程序的实现。
+public < protected < 默认 < private    越来越严格
+protected：子类能访问父类用protected修饰的方法，属性和类，同包访问；
+默认：同包下的属性，方法和类可相互访问
+2）继承：代码重用，子类能使用父类protected修饰的方法
+3）多态：同一行为能有多种形态或者结果。比如一杯水，我不知道他的温度，只有我摸了才知道他是烫的，温的还是凉的。对于不同温度的水，这个摸的动作就有不同的结果。这就是多态。
+前提：子类继承父类，重写父类方法，子类实例指向父类引用（向上转型）
+注：a. 向上转型会丢失子类自己的方法；
+   b. 只有向上转型了才能向下转型（instanceof 可免异常），从而可调用子类自己的方法；
+   c. static是类级别的，不能被重写；
+种类：编译时多态——重载，运行时多态——重写
+
+2. 抽象类和接口
+相同点：
+1）都是对公共方法的提取，这些抽象方法大多不做实现，都无方法体，仅做描述；少部分公共的实现方法也可写在接口（jdk1.8特性，要加default）或者抽象类中，这样每个实现类都不用再重新实现；
+2）都不能创建实例。
+不同点：
+1）继承：接口可多继承，抽象类跟普通类一样是单继承。
+2）构造方法：接口不能有，抽象类可有。
+3）类修饰符：接口默认public，抽象类可任意。
+注：接口的方法默认修饰符是public abstract...，变量修饰是public static final...其实是常量
+
+3. final, finally, finalize 的区别
+1）a. final 修饰类，不可被继承，如String；
+  被修饰类中的方法均按照 final 修饰的方法来执行，效率高些，其中的属性却没加 final修饰。
+  final 不能修饰抽象类和接口。
+  b. 修饰方法，不可被重写；
+  static、final修饰的变量不能被重写，可通过父类调用。
+  c. 修饰属性，是常量。
+  基本类型赋值后就不能改变，引用类型是其引用不能改变，跟所指定的对象无关。
+  常量必须要赋值，否则编译期就会报错。非static常量赋值可在定义处、{}代码块中，构造方法内。static常量可在定义处、static{}代码块中，不能在构造方法中（他是类级别的）。
+2）finalize()方法
+  它是Object 里的方法，用于垃圾回收器清理无用的对象时，可能会调用该方法，重写该方法，可实现对更多垃圾的回收（如关闭流），JVM并不保证该方法一定会被调用，而且JDK9已不赞成用这个方法。
+3）finally 是try{}catch(){}finally{}代码块的一部分
+  不管是return, break, continue都不能终止finally代码块的执行，finally代码块必执行。
+  a.break：
+    for (int i = 0; i < 3; i++) {    
+        try {        
+            System.out.println(i);        
+            if (i == 1) {            
+                break;        
+            }    
+        } catch (Exception e) {        
+            e.printStackTrace();    
+        } finally {        
+            System.out.println("执行了finally语句");   
+        }
+    }
+    结果：
+    0
+    执行了finally语句
+    1
+    执行了finally语句
+    
+  b.continue：
+    for (int i = 0; i < 3; i++) {    
+        try {        
+            System.out.println(i);        
+            if (i == 1) {            
+            continue;        
+            }    
+        } catch (Exception e) {        
+            e.printStackTrace();    
+        } finally {        
+            System.out.println("执行了finally语句");    
+        }
+     }
+      结果：
+      0
+      执行了finally语句
+      1
+      执行了finally语句
+      2
+      执行了finally语句
+  c.retrun：
+    try {    
+        return new ReturnClass();    //ReturnClass(){System.out.println("执行了return语句");}
+    } catch (Exception e) {    
+        e.printStackTrace();
+    } finally {    
+        System.out.println("执行了finally语句");
+    }
+    结果：
+    执行了return语句
+    执行了finally语句
+
+3. int 和 Integer 有什么区别
+Java为了方便还是用了八种基本类型，其余的都属于数组、类或者接口的一种。
+注：八种基本类型 + String都是用final修饰的，创建的对象是常量。
+1）int 是基本类型（默认值0），Integer是int的包装类（默认值null）；
+2）int 是直接存储值的，而Integer跟普通类一样是通过引用指向对象的；
+3）Integer x = ?; 问号在[-128,127]时为了数据的重用，此时是放在内存中，只有一个对象，范围之外的就要在堆中新建一个对象（后台去new）。故以这种方式创建的对象若其数值在范围中，那么这两个数相等。
+参考：https://blog.csdn.net/chenliguan/article/details/53888018
+Integer a = new Integer(128);
+Integer b = new Integer(128);
+Integer c = new Integer(127);
+Integer d = new Integer(127);
+Integer e = 128;
+Integer f = 128;
+Integer g = 127;
+Integer h = 127;
+int i = 128;
+int j = 128;
+int k = 127;
+int l = 127;
+(a == b) = flase    (c == d) = false    (e == f) = false    (g == h) = true
+(i == j) = true    (k == l) = true    (a == e) = false    (c == h) = false
+(a == i) = true    (c == k) = true    (e == i) = true    (g == k) = true
+
+4. String str = "abc";与String str2 = new String("abc")区别
+1）前者会先到字符串常量池中找，如果没有就创建一个，然后放在常量池中，占一份（因为字符串太常用了）；引用 str，str2 都是放在栈中的。
+2）后者的str2引用是放在栈中；new对象是放在堆中，一个独占一份空间；而常量"abc"是放在常量池中（常量池中有就让对象跟它关联起来，没有就先创建再关联），故String str2 = new String("abc")创建了一个（常量池中有了）或者两个对象。
+String a = new String("abcde");
+String b = new String("abcde");
+String e = "abcde";
+String f = "abcde";
+结果：(a == b) = false    (e == f) = true    (a == e) = false
+
+5. 堆、栈、常量池
+1）堆是在内存中存在的物理块，其存储结构是链表。存放new产生的对象，全局变量（类的属性），静态变量。动态分配，不用知道其生命周期，是链表，故灵活。
+2）栈也是内存中存在物理块（内存大小连续固定1M或2M，申请超过栈剩余大小则会报栈溢出），其结构就是栈。存放基本数据，对象引用，局部变量，参数。存取速度比堆要快，仅次于CPU中的寄存器。缺点是必须要知道数据的生命周期。
+3）常量池，存放字符串常量和基本类型常量的地方。在编译期就把数据放在常量池中，每次声明一个常量时都要去常量池中找，没有才声明然后再放进常量池中，只占用一份空间。
+https://www.jianshu.com/p/e39ab6ff17c2
+
+6. String, StringBuilder与StringBuffer区别
+1）String 线程安全，并且是由final修饰的，不能被继承，创建的对象不能修改，调用他自身的方法都是返回一个新的对象。
+2）StringBuilder 在多线程环境下是不安全的，不能通过”=“赋值，他的修改都是对对自身存储的字符串进行修改，不会产生新的对象。
+3）StringBuffer 和StringBuilder几乎是差不多的，不同的是StringBuffer是线程安全的，实现了同步，所以速度会慢些。
+建议：字符串修改较多的，是多线程就用StringBuffer，单线程用StringBuilder；修改不多的就用String。
+
+7. 重载和重写的区别
+1）重载：在父类子类或者同类里方法名相同，参数列表不同（类型，个数，顺序至少一个不同），与访问修饰符、返回值、异常抛出无关。
+2）重写：有继承关系，子类重写父类的方法，其中的方法名，方法参数列表和返回值都要相同；返回的异常要小于子类（里氏替换原则）；访问修饰符要比父类的访问修饰符要松（里氏替换原则）。
+
+8. 说说反射的用途及实现
+反射：运行时类加载器ClassLoader把 .class 字节码作为Class对象加载进内存，可以通过Class对象去得到Field，Method，Constructor对象，进而去操作新对象的成员变量及成员方法。
+实现（得到Class对象，内存只会加载一次，故三种方式得到的Class对象都是相等的）：
+1）字节码仅在本地磁盘上—— Class.forName("全类名");
+2）已经被类加载器加载进内存了，但是没有创建对象—— 类名.class;
+3）已经创建了对象—— 对象.getClass();
+用途：解耦（工厂模式中可用）、框架里
+
+9. List 和 Set 区别
+
+
+10. Scanner类
+
+
+11. 内部类
+1）成员内部类
+  a. 可把内部类看成类的成员，内部类可使用外部类的成员，包括static/private。
+  b.外部类要访问内部类要通过创建外部类对象去访问，具体的范围由访问修饰符决定。（.java文件中的类必须有一个public或者默认访问修饰符修饰的类，最多只能有一个public修饰）
+  c.成员内部类不能有static修饰的变量，但是可以有常量static final,,,
+  d.调用方式：OutClass.InnerClass obj = new OutClass().new InnerClass();
+2）方法内部类
+  a.可以把内部类看成方法是的局部变量，只能是默认修饰符修饰，不能加public,private,protected,static修饰
+3）匿名内部类
+  a.匿名能不能是没有具体的类名的，编译后是系统自动的为其命名，如Out&1.class。匿名内部类是唯一一个没有构造器的类，用匿名内部类一般用于接口回调
+    public void countDown(){
+        new Thread(){
+            @Override
+            public void run() {
+
+            }
+        }.start();
+    }
+4）静态内部类
+  a.静态内部类不能访问外部类的非静态成员
+  b.静态内部类可以在类里创建静态成员，而以上的三种类（非静态内部类）不能在类中创建静态成员，因为他们的成员要通过外部类创建实例去调用。所以懒汉式单例模式的内部类是静态内部类
+
+12. JDBC 流程
+JDBC：java执行SQL语句的java API
+1）加载jdbc驱动：
+  Class.forName("com.mysql.jdbc.Driver");
+2）设置连接：
+Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_name",username,pwd);
+3）创建语句执行对象：
+PrepareStatement ps = con.prepareStatement(sql);    //并为占位符赋值
+4）执行语句：
+ps.executeQuery();    //执行查询
+ps.executeUpdate();    //执行增删改
+5）处理结果（集）
+6）关闭连接：
+ResultSet对象，PrepareStatement对象，Connection对象关闭 close()
+
+13. 多线程
+1）线程与进程的区别
+进程：进程是操作系统分配资源的单位，线程是一段程序，有独立的内存资源，一个进程中有多个线程。进程之间切换资源开销大。
+线程：线程是cpu调度的基本单位，一个进程内的线程共享进程的数据，每个线程有独立的运行栈和程序计数器。
+（2）
+
+
+
