@@ -1,0 +1,13 @@
+1.增加字段：
+	alter table <table_name> add <column_name> <type>;
+增加备注：
+	comment on column <table_name>.<column_name> is '备注';
+删除字段：
+	alter table <table_name> drop <column_name>;
+2.创建表
+	create table <table_name>(
+		<column1> <type>,
+		<column2> <type>
+	);
+删除表：
+	drop table <table_name>
