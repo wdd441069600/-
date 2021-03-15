@@ -1,0 +1,7 @@
+1.少用in或not in，连续数值可用between and替换，子查询用exists替换
+2.少用like '%test%'
+3.where条件是否可加索引
+4.where条件左边字段尽量不要用函数
+5.少用*，尽量用确定字段替换
+6.少用or，尽量用union替换
+7.少用is null或is not null，尽量设置默认值
