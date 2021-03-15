@@ -1,0 +1,26 @@
+1.ls <option> <file>(可模糊)
+	-l:展示目录下全信息
+	-a:所有文件，包括隐藏文件.
+	-t:按时间降序
+	-h:展示一目了然的文件大小
+2.tar 压缩/解压
+	tar -zcvf <newFile> <sourceFile>
+	tar -zxvf <newFile>
+3.rm 删除
+	rm <file>(可模糊)
+4.SFTP命令
+	1.sftp	[-P port] username@ip;	连接sftp服务器
+	回车再输入密码
+	2.需要先切到linux本地目录（lcd）
+	get <file>(可模糊);	sftp服务器下载到linux本地
+	sz <file>(可模糊);	下载到windows本地：
+	rz <file>(可模糊);	windows上传文件到linux本地
+	put <file>(可模糊);	linux上传到sftp服务器
+	3.rm <file>;	sftp删除文件
+	4.rmdir <directory>;	sftp删除目录
+	5.bye/quit; 退出sftp
+	6.lls; 展示linux本地目录下的文件
+	7.lcd; 切换linux本地目录
+	8.lpwd; 展示linux本地目录路径
+	9.rename <sourceFile> <newFile>;	文件重命名
+	
